@@ -1,5 +1,8 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for
 from base import BaseUnit
+from classes import unit_classes
+from equipment import Equipment, EquipmentData
+
 app = Flask(__name__)
 
 heroes = {
@@ -7,13 +10,12 @@ heroes = {
     "enemy": BaseUnit
 }
 
-arena =  ... # TODO инициализируем класс арены
+arena = ...  # TODO инициализируем класс арены
 
 
 @app.route("/")
 def menu_page():
-    # TODO рендерим главное меню (шаблон index.html)
-    pass
+    return render_template("index.html")
 
 
 @app.route("/fight/")
@@ -21,6 +23,7 @@ def start_fight():
     # TODO выполняем функцию start_game экземпляра класса арена и передаем ему необходимые аргументы
     # TODO рендерим экран боя (шаблон fight.html)
     pass
+
 
 @app.route("/fight/hit")
 def hit():
@@ -54,18 +57,29 @@ def end_fight():
 
 @app.route("/choose-hero/", methods=['post', 'get'])
 def choose_hero():
-    # TODO кнопка выбор героя. 2 метода GET и POST
-    # TODO на GET отрисовываем форму.
-    # TODO на POST отправляем форму и делаем редирект на эндпоинт choose enemy
-    pass
+    if request.method == "GET":
+        return render_template(
+            "hero_choosing.html",
+            header="Выберите героя",
+            classes=unit_classes.values(),
+            weapons=Equipment().get_weapons_names(),
+            armors=Equipment().get_armors_names(),
+            next_button="Выбрать врага"
+        )
+    return redirect(url_for("choose_enemy"))
 
 
 @app.route("/choose-enemy/", methods=['post', 'get'])
 def choose_enemy():
-    # TODO кнопка выбор соперников. 2 метода GET и POST
-    # TODO также на GET отрисовываем форму.
-    # TODO а на POST отправляем форму и делаем редирект на начало битвы
-    pass
+    if request.method == "GET":
+        return render_template(
+            "hero_choosing.html",
+            header="Выберите врага",
+            classes=unit_classes.values(),
+            weapons=Equipment().get_weapons_names(),
+            armors=Equipment().get_armors_names(),
+            next_button="Начать битву"
+        )
 
 
 if __name__ == "__main__":
