@@ -1,14 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
-from base import BaseUnit
+# from base import BaseUnit
 from classes import unit_classes
 from equipment import Equipment, EquipmentData
 
 app = Flask(__name__)
 
-heroes = {
-    "player": BaseUnit,
-    "enemy": BaseUnit
-}
+# heroes = {
+#     "player": BaseUnit,
+#     "enemy": BaseUnit
+# }
 
 arena = ...  # TODO инициализируем класс арены
 

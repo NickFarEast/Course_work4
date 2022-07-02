@@ -1,6 +1,8 @@
-from skills import FuryPunch, Skill, HardShot
+from skills import Skill, furious_kick, hard_shot
 from dataclasses import dataclass
 from typing import Dict, Type
+
+
 @dataclass
 class UnitClass:
     name: str
@@ -19,7 +21,7 @@ WarriorClass = UnitClass(
     attack=0.9,
     stamina=0.8,
     armor=1.2,
-    skill=FuryPunch()
+    skill=furious_kick
 )
 
 ThiefClass = UnitClass(
@@ -29,7 +31,7 @@ ThiefClass = UnitClass(
     attack=1.2,
     stamina=1.5,
     armor=1.0,
-    skill=HardShot()
+    skill=hard_shot
 )
 
 unit_classes: Dict[str, Type[UnitClass]] = {
