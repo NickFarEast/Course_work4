@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from equipment import Equipment, Weapon, Armor
+from equipment import Weapon, Armor
 from classes import UnitClass
 from random import randint
 from typing import Optional
@@ -41,17 +41,6 @@ class BaseUnit(ABC):
     def stamina(self, value):
         self._stamina = value
 
-    #
-    #
-    #
-    #     def equip_weapon(self, weapon: Weapon):
-    #
-    #         return f"{self.name} экипирован оружием {self.weapon.name}"
-    #
-    #     def equip_armor(self, armor: Armor):
-    #         # TODO одеваем новую броню
-    #         return f"{self.name} экипирован броней {self.weapon.name}"
-    #
     @property
     def total_armor(self) -> float:  # логику расчета брони цели
         if self.stamina - self.armor.stamina_per_turn >= 0:  # если у защищающегося нехватает выносливости - его
@@ -83,21 +72,11 @@ class BaseUnit(ABC):
         pass
 
     def use_skill(self) -> Optional[float]:
-        if not self._is_skill_used and self.stamina - self.unit_class.skill.stamina:
+        if not self._is_skill_used and self.stamina - self.unit_class.skill.stamina > 0:
             self._is_skill_used = True
+            self.stamina -= self.unit_class.skill.stamina
             return round(self.unit_class.skill.damage, 1)
         return None
-
-        # """
-        #         метод использования умения.
-        #         если умение уже использовано возвращаем строку
-        #         Навык использован
-        #         Если же умение не использовано тогда выполняем функцию
-        #
-        #
-        # self.unit_class.skill.use(user=self, target=target)
-        # и уже эта функция вернем нам строку которая характеризует выполнение умения
-        # """
 
     def regenerate_stamina(self):
         delta_stamina = BASE_STAMINA_PER_ROUND * self.unit_class.stamina
@@ -109,38 +88,14 @@ class BaseUnit(ABC):
 
 class PlayerUnit(BaseUnit):
 
-    def hit(self, target: BaseUnit) -> str:
-        return self.hit(target)
+    def hit(self, target: BaseUnit) -> Optional[float]:
+        return self._count_damage(target)
 
-
-#         функция удар игрока:
-#         здесь происходит проверка достаточно ли выносливости для нанесения удара.
-#         вызывается функция self._count_damage(target)
-#         а также возвращается результат в виде строки
-#         """
-#         pass
-#         # TODO результат функции должен возвращать следующие строки:
-#         f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} соперника и наносит {damage} урона."
-#         f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} cоперника его останавливает."
-#         f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
 
 class EnemyUnit(BaseUnit):
 
-    def hit(self, target: BaseUnit) -> str:
-        if randint(0, 100) < 10 and self.stamina >= self.unit_class.skill.stamina and not self._is_skill_used:
+    def hit(self, target: BaseUnit) -> Optional[float]:
+        if 10 > randint(0, 100) and self.stamina >= self.unit_class.skill.stamina and not self._is_skill_used:
             self.use_skill()
-        return self.hit(target)
+        return self._count_damage(target)
 
-#         функция удар соперника
-#         должна содержать логику применения соперником умения
-#         (он должен делать это автоматически и только 1 раз за бой).
-#         Например, для этих целей можно использовать функцию randint из библиотеки random.
-#         Если умение не применено, противник наносит простой удар, где также используется
-#         функция _count_damage(target
-#         """
-#         # TODO результат функции должен возвращать результат функции skill.use или же следующие строки:
-#         f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} и наносит Вам {damage} урона."
-#         f"{self.name} используя {self.weapon.name} наносит удар, но Ваш(а) {target.armor.name} его останавливает."
-#         f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
-#
-#
